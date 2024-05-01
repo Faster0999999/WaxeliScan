@@ -1,0 +1,133 @@
+import socket
+import argparse
+
+def scan_ports(target_host, start_port, end_port):
+    print(f'Starting port scan on {target_host} from port {start_port} to {end_port}...\n')
+    
+    for port in range(start_port, end_port + 1):
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        socket.setdefaulttimeout(1)  # Set timeout to 1 second
+
+        try:
+            result = sock.connect_ex((target_host, port))
+            if result == 0:
+                print(f'Port {port}: Open')
+            else:
+                print(f'Port {port}: Closed')
+            sock.close()
+
+        except KeyboardInterrupt:
+            print("\nExiting...")
+            break
+
+        except socket.error:
+            print("Couldn't connect to server.")
+            break
+
+def main():
+    parser = argparse.ArgumentParser(description='Simple port scanner')
+    parser.add_argument('host', help='Target host or IP address')
+    parser.add_argument('start_port', type=int, help='Start port number')
+    parser.add_argument('end_port', type=int, help='End port number')
+
+    args = parser.parse_args()
+    target_host = args.host
+    start_port = args.start_port
+    end_port = args.end_port
+
+    scan_ports(target_host, start_port, end_port)
+
+if __name__ == "__main__":
+    main()
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    import socket
+import argparse
+
+# Function to display custom text banner
+def display_banner():
+    banner = """
+    ***********************************************
+    *                                             *
+    *           Welcome to Axeliscan              *
+    *                                             *
+    *       Simple Port Scanner by axeli          *
+    *                                             *
+    ***********************************************
+    """
+    print(banner)
+
+def scan_ports(target_host, start_port, end_port):
+    display_banner()  # Display custom banner at the beginning of scanning
+    print(f'Starting port scan on {target_host} from port {start_port} to {end_port}...\n')
+    
+    try:
+        for port in range(start_port, end_port + 1):
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            socket.setdefaulttimeout(1)  # Set timeout to 1 second
+
+            try:
+                result = sock.connect_ex((target_host, port))
+                if result == 0:
+                    service_name = socket.getservbyport(port)
+                    print(f'Port {port}: Open ({service_name})')
+
+                    # Attempt to receive data from the port to determine why it's open
+                    banner = sock.recv(1024)  # Try to receive up to 1024 bytes from the port
+                    if banner:
+                        try:
+                            # Attempt to decode received bytes using UTF-8
+                            banner_str = banner.decode('utf-8').strip()
+                            print(f'Received banner from {target_host}:{port}: {banner_str}')
+                        except UnicodeDecodeError:
+                            # If decoding as UTF-8 fails, print as hexadecimal representation
+                            print(f'Received banner from {target_host}:{port}: {banner.hex()} (Hexadecimal)')
+                    else:
+                        print(f'No banner received from {target_host}:{port}')
+                else:
+                    print(f'Port {port}: Closed')
+                sock.close()
+
+            except KeyboardInterrupt:
+                print("\nExiting...")
+                break
+
+            except socket.error:
+                print(f"Couldn't connect to port {port}")
+
+    except socket.error as e:
+        print(f"Socket error: {e}")
+
+def main():
+    parser = argparse.ArgumentParser(description='Simple port scanner')
+    parser.add_argument('host', help='Target host or IP address')
+    parser.add_argument('start_port', type=int, help='Start port number')
+    parser.add_argument('end_port', type=int, help='End port number')
+
+    args = parser.parse_args()
+    target_host = args.host
+    start_port = args.start_port
+    end_port = args.end_port
+
+    scan_ports(target_host, start_port, end_port)
+
+if __name__ == "__main__":
+    main()
+    
